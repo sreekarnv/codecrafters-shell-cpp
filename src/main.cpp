@@ -1,8 +1,27 @@
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <unistd.h>
-#include <errno.h>
+#include <vector>
+
+std::vector<std::string> split(const std::string& str, char delimiter = ' ')
+{
+    std::vector<std::string> tokens;
+    int startIdx = 0;
+    int endIdx = str.find(delimiter);
+
+    while (endIdx != std::string::npos)
+    {
+        tokens.push_back(str.substr(startIdx, endIdx - startIdx));
+        startIdx = endIdx + 1;
+        endIdx = str.find(delimiter, startIdx);
+    }
+
+    tokens.push_back(str.substr(startIdx));
+
+    return tokens;
+}
 
 int main() {
     // Flush after every std::cout / std:cerr
@@ -55,7 +74,29 @@ int main() {
         }
         else
         {
-            std::cout << command << ": command not found" << std::endl;
+            char* PATH = std::getenv("PATH");
+            std::istringstream pathStream(PATH);
+            std::string pathSplit;
+            bool isValid{false};
+
+            std::vector<std::string> cmdItems = split(command);
+
+            while (std::getline(pathStream, pathSplit, ':'))
+            {
+                std::string commandPath = pathSplit + '/' + cmdItems[0];
+                if (access(commandPath.c_str(), X_OK) == 0)
+                {
+                    std::system(("cd " + pathSplit).c_str());
+                    std::system(command.c_str());
+                    isValid = true;
+                    break;
+                }
+            }
+
+            if (!isValid)
+            {
+                std::cout << command << ": command not found" << std::endl;
+            }
         }
     }
 }
