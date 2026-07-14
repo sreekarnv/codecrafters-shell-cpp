@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <filesystem>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -44,7 +45,7 @@ int main() {
         {
             std::string _type = command.substr(5);
 
-            if (_type == "echo" || _type == "exit" || _type == "type")
+            if (_type == "echo" || _type == "exit" || _type == "type" || _type == "pwd")
             {
                 std::cout << _type << " is a shell builtin" << std::endl;
             }
@@ -71,6 +72,10 @@ int main() {
                     std::cout << _type << ": not found" << std::endl;
                 }
             }
+        }
+        else if (command == "pwd")
+        {
+            std::cout << std::filesystem::current_path().c_str() << std::endl;
         }
         else
         {
