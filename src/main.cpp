@@ -83,7 +83,15 @@ int main() {
 
             try
             {
-                std::filesystem::current_path(dirPath);
+                if (dirPath == "~")
+                {
+                    const char* home = std::getenv("HOME");
+                    std::filesystem::current_path(home);
+                }
+                else
+                {
+                    std::filesystem::current_path(dirPath);
+                }
             }
             catch (const std::filesystem::filesystem_error& e)
             {
