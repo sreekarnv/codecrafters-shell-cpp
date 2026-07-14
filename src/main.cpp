@@ -77,6 +77,19 @@ int main() {
         {
             std::cout << std::filesystem::current_path().c_str() << std::endl;
         }
+        else if (command.substr(0, 3) == "cd ")
+        {
+            std::string dirPath = command.substr(3);
+
+            try
+            {
+                std::filesystem::current_path(dirPath);
+            }
+            catch (const std::filesystem::filesystem_error& e)
+            {
+                std::cout << "cd: " << dirPath << ": No such file or directory" << std::endl;
+            }
+        }
         else
         {
             char* PATH = std::getenv("PATH");
